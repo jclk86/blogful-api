@@ -31,6 +31,24 @@ app.get('/articles', (req, res, next) => {
       .catch(next) // next belongs to a middleware. It will run and handle the error. 
 })
 
+app.get('/articles/:article_id', (req,res,next) => {
+    const knexInstance = req.app.get('db')
+    ArticlesService.getById(knexInstance, req.params.article_id)
+    .then(article => {
+        if(!article) {
+            return res.status(404).json({ error: { message: `Article doesn't exist`}})
+        }
+        res.json({
+            id: article.id,
+            title: article.title,
+            style: article.style,
+            content: article.content,
+            date_published: new Date(article.date_published)
+        })
+    })
+    .catch(next)
+})
+
 app.get("/", (req,res) => {
     res.send("Hello, boilerplate!")
 })
