@@ -43,7 +43,7 @@ app.get('/articles/:article_id', (req,res,next) => {
             title: article.title,
             style: article.style,
             content: article.content,
-            date_published: new Date(article.date_published)
+            date_published: new Date(article.date_published).getUTCDate()
         })
     })
     .catch(next)
