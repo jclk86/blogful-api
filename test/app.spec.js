@@ -1,5 +1,5 @@
 const app = require('../src/app')
-
+// This is a supertest 
 describe('App', () => {
   it('GET / responds with 200 containing "Hello, world!"', () => {
     return supertest(app)

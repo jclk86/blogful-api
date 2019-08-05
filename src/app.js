@@ -4,6 +4,7 @@ const morgan = require('morgan')
 const cors = require('cors')
 const helmet = require('helmet')
 const {NODE_ENV} = require("./config")
+const ArticlesService = require('./articles-service')
 
 const app = express()
 
@@ -14,6 +15,21 @@ const morganOption = (NODE_ENV === 'production')
 app.use(morgan(morganOption))
 app.use(helmet())
 app.use(cors())
+
+app.get('/articles', (req, res, next) => {
+    const knexInstance = req.app.get('db') // app object created in server.js. This and app.set in server.js is very important *** 
+    ArticlesService.getAllArticles(knexInstance)
+      .then(articles => {
+          res.json(articles.map(article => ({
+              id: article.id,
+              title: article.title,
+              style: article.style,
+              content: article.content,
+              date_published: new Date(article.date_published)
+          })))
+      })
+      .catch(next) // next belongs to a middleware. It will run and handle the error. 
+})
 
 app.get("/", (req,res) => {
     res.send("Hello, boilerplate!")
@@ -31,3 +47,5 @@ app.use(function errorHandler(error, req, res, next) {
 })
 
 module.exports = app
+
+// migration steps help create, update 
